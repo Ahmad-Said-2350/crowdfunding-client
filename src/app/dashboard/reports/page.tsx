@@ -1,6 +1,6 @@
 "use client";
 
-import { useEffect, useState } from "react";
+import { useCallback, useEffect, useState } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { Badge } from "@/components/ui/Badge";
 import { Button } from "@/components/ui/Button";
@@ -20,26 +20,42 @@ type Report = {
 export default function ReportsPage() {
   const [reports, setReports] = useState<Report[]>([]);
   const [message, setMessage] = useState("");
+  const [error, setError] = useState("");
+  const [busyId, setBusyId] = useState<string>("");
 
-  const load = () =>
-    fetchJSON<{ reports: Report[] }>("/api/admin/reports")
-      .then((r) => setReports(r.reports))
-      .catch(() => undefined);
-
-  useEffect(() => {
-    load();
+  const load = useCallback(async () => {
+    try {
+      const r = await fetchJSON<{ reports: Report[] }>("/api/admin/reports");
+      setReports(
+        (r.reports || []).map((item) => ({
+          ...item,
+          _id: String(item._id),
+        }))
+      );
+    } catch {
+      setError("Unable to load reports.");
+    }
   }, []);
 
+  useEffect(() => {
+    void load();
+  }, [load]);
+
   const act = async (id: string, action: "suspend" | "delete" | "resolve") => {
+    setMessage("");
+    setError("");
+    setBusyId(`${id}:${action}`);
     try {
-      await fetchJSON(`/api/admin/reports/${id}`, {
+      const result = await fetchJSON<{ message?: string }>(`/api/admin/reports/${id}`, {
         method: "PATCH",
         body: JSON.stringify({ action }),
       });
-      setMessage(`Report ${action}d.`);
-      load();
+      setMessage(result.message || `Report ${action} completed.`);
+      await load();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Action failed.");
+      setError(err instanceof Error ? err.message : "Action failed.");
+    } finally {
+      setBusyId("");
     }
   };
 
@@ -50,7 +66,16 @@ export default function ReportsPage() {
         title="Reports"
         description="Review campaigns flagged as suspicious or fraudulent and take corrective action."
       />
-      {message && <p className="mb-4 text-sm">{message}</p>}
+      {message && (
+        <p className="mb-4 rounded-lg bg-[var(--success-soft)] px-4 py-3 text-sm text-[var(--success)]">
+          {message}
+        </p>
+      )}
+      {error && (
+        <p role="alert" className="mb-4 rounded-lg bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]">
+          {error}
+        </p>
+      )}
       {reports.length ? (
         <div className="overflow-auto">
           <table className="data-table">
@@ -65,20 +90,58 @@ export default function ReportsPage() {
               </tr>
             </thead>
             <tbody>
-              {reports.map((r) => (
-                <tr key={r._id}>
-                  <td>{r.reporter_name}</td>
-                  <td>{r.campaign_title}</td>
-                  <td className="max-w-xs">{r.reason}</td>
-                  <td>{new Date(r.date).toLocaleString()}</td>
-                  <td><Badge tone={r.status === "open" ? "warning" : "success"}>{r.status}</Badge></td>
-                  <td className="flex flex-wrap gap-2">
-                    <Button className="h-9 px-3" variant="secondary" onClick={() => void act(r._id, "suspend")}>Suspend</Button>
-                    <Button className="h-9 px-3" variant="ghost" onClick={() => void act(r._id, "delete")}>Delete</Button>
-                    <Button className="h-9 px-3" onClick={() => void act(r._id, "resolve")}>Resolve</Button>
-                  </td>
-                </tr>
-              ))}
+              {reports.map((r) => {
+                const open = r.status === "open";
+                const working = busyId.startsWith(`${r._id}:`);
+                return (
+                  <tr key={r._id}>
+                    <td>{r.reporter_name}</td>
+                    <td>{r.campaign_title}</td>
+                    <td className="max-w-xs">{r.reason}</td>
+                    <td>{new Date(r.date).toLocaleString()}</td>
+                    <td>
+                      <Badge
+                        tone={
+                          r.status === "open" ? "warning" : r.status === "suspended" ? "danger" : "success"
+                        }
+                      >
+                        {r.status}
+                      </Badge>
+                    </td>
+                    <td>
+                      {open ? (
+                        <div className="flex flex-wrap gap-2">
+                          <Button
+                            className="h-9 px-3"
+                            variant="secondary"
+                            disabled={working}
+                            onClick={() => void act(r._id, "suspend")}
+                          >
+                            {busyId === `${r._id}:suspend` ? "…" : "Suspend"}
+                          </Button>
+                          <Button
+                            className="h-9 px-3"
+                            variant="ghost"
+                            disabled={working}
+                            onClick={() => void act(r._id, "delete")}
+                          >
+                            {busyId === `${r._id}:delete` ? "…" : "Delete"}
+                          </Button>
+                          <Button
+                            className="h-9 px-3"
+                            disabled={working}
+                            onClick={() => void act(r._id, "resolve")}
+                          >
+                            {busyId === `${r._id}:resolve` ? "…" : "Resolve"}
+                          </Button>
+                        </div>
+                      ) : (
+                        <span className="text-xs text-[var(--muted)]">No actions</span>
+                      )}
+                    </td>
+                  </tr>
+                );
+              })}
             </tbody>
           </table>
         </div>
