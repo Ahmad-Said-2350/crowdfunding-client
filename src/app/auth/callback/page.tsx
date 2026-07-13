@@ -16,9 +16,7 @@ export default function AuthCallbackPage() {
 
     const finish = async () => {
       try {
-        // Cookie is on the API host; credentials:include + SameSite=None must land first.
-        for (let attempt = 0; attempt < 6; attempt++) {
-          await saveToken();
+        for (let attempt = 0; attempt < 8; attempt++) {
           const session = await authClient.getSession();
           if (session.data?.user) {
             await saveToken();
@@ -26,7 +24,9 @@ export default function AuthCallbackPage() {
             if (!cancelled) router.replace("/dashboard");
             return;
           }
-          await new Promise((r) => setTimeout(r, 350));
+          // First attempts often race the Set-Cookie from the OAuth redirect
+          await saveToken().catch(() => undefined);
+          await new Promise((r) => setTimeout(r, 250));
         }
 
         if (!cancelled) {

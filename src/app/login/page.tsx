@@ -49,8 +49,9 @@ function LoginForm() {
       <p className="mt-2 text-sm text-[var(--muted)]">Enter your credentials to continue.</p>
       {googleFailed && (
         <p role="alert" className="mt-4 rounded-lg bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]">
-          Google sign-in failed. In Google Cloud Console, set the redirect URI to end with{" "}
-          <code className="font-semibold">/api/auth/callback/google</code> (not /goog), and add both Vercel origins.
+          Google sign-in failed. In Google Cloud Console add redirect URI{" "}
+          <code className="break-all font-semibold">https://crowdfunding-client-zeta.vercel.app/api/auth/callback/google</code>{" "}
+          and JavaScript origin <code className="font-semibold">https://crowdfunding-client-zeta.vercel.app</code>, then try again.
         </p>
       )}
 
