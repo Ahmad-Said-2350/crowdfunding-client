@@ -158,5 +158,64 @@ img { max-width: 100%; display: block; }
 }
 
 .swiper-pagination-bullet-active { background: var(--brand) !important; }
-.swiper-button-next,
-.swiper-button-prev { color: #fff !important; }
+
+/* Tracway-style hero slider controls */
+.hero-slider .swiper-pagination {
+  bottom: 1.5rem !important;
+}
+.hero-slider .swiper-pagination-bullet {
+  width: 10px;
+  height: 10px;
+  background: rgba(255, 255, 255, 0.45);
+  opacity: 1;
+}
+.hero-slider .swiper-pagination-bullet-active {
+  background: #fff !important;
+  width: 28px;
+  border-radius: 999px;
+}
+
+.hero-nav-btn {
+  position: absolute;
+  top: 50%;
+  z-index: 20;
+  display: grid;
+  place-items: center;
+  width: 3.25rem;
+  height: 3.25rem;
+  border: 1px solid rgba(255, 255, 255, 0.35);
+  border-radius: 9999px;
+  background: rgba(255, 255, 255, 0.14);
+  color: #fff;
+  backdrop-filter: blur(8px);
+  transform: translateY(-50%);
+  transition: background 0.2s ease, border-color 0.2s ease, transform 0.2s ease, box-shadow 0.2s ease;
+  box-shadow: 0 8px 24px rgba(0, 0, 0, 0.18);
+}
+.hero-nav-btn:hover {
+  background: #fff;
+  color: var(--brand-deep);
+  border-color: #fff;
+  transform: translateY(-50%) scale(1.04);
+}
+.hero-nav-btn:active {
+  transform: translateY(-50%) scale(0.98);
+}
+.hero-nav-prev { left: 1rem; }
+.hero-nav-next { right: 1rem; }
+
+@media (min-width: 768px) {
+  .hero-nav-prev { left: 1.5rem; }
+  .hero-nav-next { right: 1.5rem; }
+  .hero-nav-btn {
+    width: 3.5rem;
+    height: 3.5rem;
+  }
+}
+
+@media (max-width: 640px) {
+  .hero-nav-btn {
+    width: 2.75rem;
+    height: 2.75rem;
+  }
+}

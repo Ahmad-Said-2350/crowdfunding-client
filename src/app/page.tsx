@@ -2,10 +2,11 @@
 
 import Link from "next/link";
 import { motion } from "framer-motion";
-import { Navigation, Pagination, Autoplay } from "swiper/modules";
+import { Pagination, Autoplay } from "swiper/modules";
 import { Swiper, SwiperSlide } from "swiper/react";
+import type { Swiper as SwiperType } from "swiper";
 import { useEffect, useState } from "react";
-import { ArrowRight } from "lucide-react";
+import { HiOutlineChevronLeft, HiOutlineChevronRight, HiArrowRight } from "react-icons/hi2";
 import { BasicLayout } from "@/components/layout/BasicLayout";
 import { CampaignCard } from "@/components/CampaignCard";
 import { Button } from "@/components/ui/Button";
@@ -18,18 +19,21 @@ const slides = [
     copy: "Discover verified campaigns, contribute with credits, and track every outcome with clarity.",
     href: "/explore",
     cta: "Explore campaigns",
+    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=1800&q=80",
   },
   {
     title: "Launch with trust built in.",
     copy: "Create campaigns, review support carefully, and withdraw when your community backs you.",
     href: "/register",
     cta: "Start creating",
+    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1800&q=80",
   },
   {
     title: "A calmer way to crowdfund.",
     copy: "Pledgekit keeps approvals, refunds, and platform economics visible for every role.",
     href: "#impact",
     cta: "See impact",
+    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1800&q=80",
   },
 ];
 
@@ -57,6 +61,7 @@ const testimonials = [
 export default function Home() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [stats, setStats] = useState({ campaigns: 0, creditsRaised: 0, supporters: 0, creators: 0 });
+  const [heroSwiper, setHeroSwiper] = useState<SwiperType | null>(null);
 
   useEffect(() => {
     fetchJSON<{ campaigns: Campaign[] }>("/api/campaigns/top").then((r) => setCampaigns(r.campaigns)).catch(() => undefined);
@@ -65,27 +70,73 @@ export default function Home() {
 
   return (
     <BasicLayout>
-      <section className="relative overflow-hidden bg-[var(--brand-deep)] text-white">
-        <div className="pointer-events-none absolute inset-0 bg-[radial-gradient(circle_at_20%_20%,rgba(45,212,191,0.22),transparent_40%),radial-gradient(circle_at_80%_10%,rgba(255,255,255,0.08),transparent_35%)]" />
-        <Swiper modules={[Navigation, Pagination, Autoplay]} navigation pagination={{ clickable: true }} autoplay={{ delay: 6500 }} loop className="relative">
+      <section className="hero-slider relative overflow-hidden bg-[var(--brand-deep)] text-white">
+        <Swiper
+          modules={[Pagination, Autoplay]}
+          onSwiper={setHeroSwiper}
+          pagination={{ clickable: true }}
+          autoplay={{ delay: 6500, disableOnInteraction: false }}
+          loop
+          speed={700}
+          className="hero-swiper relative"
+        >
           {slides.map((slide, i) => (
             <SwiperSlide key={slide.title}>
-              <div className="container-pk flex min-h-[72vh] items-center py-20">
-                <motion.div initial={{ opacity: 0, y: 18 }} animate={{ opacity: 1, y: 0 }} className="max-w-2xl">
-                  <p className="mb-5 text-xs font-semibold uppercase tracking-[0.18em] text-teal-200">
-                    {BRAND.name} · 0{i + 1}
-                  </p>
-                  <h1 className="text-4xl font-bold leading-[1.08] tracking-tight md:text-6xl">{slide.title}</h1>
-                  <p className="mt-6 max-w-xl text-base leading-7 text-teal-50/85 md:text-lg">{slide.copy}</p>
-                  <div className="mt-9 flex flex-wrap gap-3">
-                    <Link href={slide.href}><Button size="lg">{slide.cta} <ArrowRight size={18} /></Button></Link>
-                    <Link href="/register"><Button size="lg" variant="secondary" className="border-white/20 bg-white/10 text-white hover:bg-white hover:text-[var(--brand-deep)]">Create account</Button></Link>
-                  </div>
-                </motion.div>
+              <div className="relative min-h-[78vh]">
+                <img src={slide.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
+                <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(15,40,38,0.92)_0%,rgba(15,40,38,0.72)_48%,rgba(15,40,38,0.35)_100%)]" />
+                <div className="container-pk relative z-10 flex min-h-[78vh] items-center py-24">
+                  <motion.div
+                    initial={{ opacity: 0, y: 22 }}
+                    whileInView={{ opacity: 1, y: 0 }}
+                    viewport={{ once: true }}
+                    transition={{ duration: 0.45 }}
+                    className="max-w-2xl"
+                  >
+                    <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-teal-200">
+                      {BRAND.name} · 0{i + 1}
+                    </p>
+                    <h1 className="text-4xl font-bold leading-[1.08] tracking-tight md:text-6xl">{slide.title}</h1>
+                    <p className="mt-6 max-w-xl text-base leading-7 text-white/85 md:text-lg">{slide.copy}</p>
+                    <div className="mt-9 flex flex-wrap gap-3">
+                      <Link href={slide.href}>
+                        <Button size="lg">
+                          {slide.cta} <HiArrowRight size={18} />
+                        </Button>
+                      </Link>
+                      <Link href="/register">
+                        <Button
+                          size="lg"
+                          variant="secondary"
+                          className="border-white/30 bg-white/10 text-white hover:bg-white hover:text-[var(--brand-deep)]"
+                        >
+                          Create account
+                        </Button>
+                      </Link>
+                    </div>
+                  </motion.div>
+                </div>
               </div>
             </SwiperSlide>
           ))}
         </Swiper>
+
+        <button
+          type="button"
+          aria-label="Previous slide"
+          className="hero-nav-btn hero-nav-prev"
+          onClick={() => heroSwiper?.slidePrev()}
+        >
+          <HiOutlineChevronLeft size={22} />
+        </button>
+        <button
+          type="button"
+          aria-label="Next slide"
+          className="hero-nav-btn hero-nav-next"
+          onClick={() => heroSwiper?.slideNext()}
+        >
+          <HiOutlineChevronRight size={22} />
+        </button>
       </section>
 
       <section className="section-space container-pk">
