@@ -1,36 +1,46 @@
-This is a [Next.js](https://nextjs.org) project bootstrapped with [`create-next-app`](https://nextjs.org/docs/app/api-reference/cli/create-next-app).
+# Fundora
 
-## Getting Started
+Transparent crowdfunding for ideas that deserve momentum.
 
-First, run the development server:
+Fundora is a credit-based crowdfunding platform where Supporters discover campaigns, Creators raise funding, and Admins keep the marketplace trustworthy.
 
-```bash
-npm run dev
-# or
-yarn dev
-# or
-pnpm dev
-# or
-bun dev
-```
+## Live links
 
-Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
+- Front-end live site: `https://fundora.vercel.app` *(update after deploy)*
+- Client GitHub: https://github.com/Ahmad-Said-2350/crowdfunding-client
+- Server GitHub: https://github.com/Ahmad-Said-2350/crowdfunding-server
 
-You can start editing the page by modifying `app/page.tsx`. The page auto-updates as you edit the file.
+## Admin credentials
 
-This project uses [`next/font`](https://nextjs.org/docs/app/building-your-application/optimizing/fonts) to automatically optimize and load [Geist](https://vercel.com/font), a new font family for Vercel.
+- Admin email: `admin@fundora.app`
+- Admin password: `Admin@Fundora2026`
 
-## Learn More
+## Features
 
-To learn more about Next.js, take a look at the following resources:
+- Role-based access for Supporter, Creator, and Admin with private dashboard routes that survive page reload
+- Better Auth email/password + Google sign-in with JWT stored in localStorage
+- Default registration credits: 50 for Supporters, 20 for Creators
+- Campaign lifecycle with pending admin approval before public discovery
+- Contribution workflow with pending / approved / rejected states and automatic refunds
+- Stripe credit packages (100 / 300 / 800 / 1500) with dummy checkout fallback when Stripe keys are absent
+- Creator withdrawals at 20 credits = $1 with a 200-credit minimum
+- Notification center with floating popup and click-outside dismiss
+- imgBB image uploads on registration and campaign creation
+- Paginated My Contributions ledger for Supporters
+- Campaign reporting, admin moderation, and user role management
+- Responsive IBM-inspired UI across mobile, tablet, and desktop
+- Unique extras: category insights, platform impact ledger, advanced explore filters
 
-- [Next.js Documentation](https://nextjs.org/docs) - learn about Next.js features and API.
-- [Learn Next.js](https://nextjs.org/learn) - an interactive Next.js tutorial.
+## Local development
 
-You can check out [the Next.js GitHub repository](https://github.com/vercel/next.js) - your feedback and contributions are welcome!
+1. Copy `.env.local.example` to `.env.local` and point `NEXT_PUBLIC_API_URL` at the Fundora API.
+2. `npm install`
+3. `npm run dev` → http://localhost:3000
 
-## Deploy on Vercel
+## Stack
 
-The easiest way to deploy your Next.js app is to use the [Vercel Platform](https://vercel.com/new?utm_medium=default-template&filter=next.js&utm_source=create-next-app&utm_campaign=create-next-app-readme) from the creators of Next.js.
-
-Check out our [Next.js deployment documentation](https://nextjs.org/docs/app/building-your-application/deploying) for more details.
+- Next.js 15 (App Router) + TypeScript
+- Tailwind CSS v4
+- Better Auth client + JWT plugin
+- Swiper + Framer Motion
+- Lucide icons
