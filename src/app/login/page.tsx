@@ -3,11 +3,13 @@
 import Link from "next/link";
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { ArrowRight, Eye, EyeOff } from "lucide-react";
+import { HiOutlineArrowRight, HiOutlineEye, HiOutlineEyeSlash } from "react-icons/hi2";
 import { Button } from "@/components/ui/Button";
 import { Input } from "@/components/ui/Input";
+import { GoogleIcon } from "@/components/ui/GoogleIcon";
 import { authClient } from "@/lib/auth-client";
 import { useAuth } from "@/context/AuthContext";
+import { APP_URL } from "@/lib/api";
 import { BRAND } from "@/lib/types";
 
 export default function LoginPage() {
@@ -36,31 +38,40 @@ export default function LoginPage() {
   };
 
   return (
-    <div className="min-h-screen bg-[linear-gradient(160deg,#f3f6f6_0%,#e7f3f1_45%,#f8fafc_100%)]">
-      <div className="mx-auto flex min-h-screen max-w-6xl flex-col px-5 py-6 lg:flex-row lg:items-center lg:gap-16 lg:px-8">
-        <div className="mb-10 lg:mb-0 lg:flex-1">
-          <Link href="/" className="inline-flex items-center text-xl font-bold tracking-tight text-[var(--ink)]">
-            {BRAND.name}<span className="text-[var(--brand)]">.</span>
-          </Link>
-          <h1 className="mt-10 max-w-lg text-4xl font-bold tracking-tight text-[var(--ink)] md:text-5xl">
-            Welcome back to clearer crowdfunding.
-          </h1>
-          <p className="mt-4 max-w-md text-base leading-7 text-[var(--muted)]">
-            Sign in to manage credits, campaigns, and contributions — built for Supporters, Creators, and Admins.
-          </p>
-          <div className="mt-8 hidden gap-3 lg:flex">
-            {["Secure sessions", "Role-based dashboards", "Transparent credits"].map((item) => (
-              <span key={item} className="rounded-full bg-white/80 px-4 py-2 text-xs font-semibold text-[var(--brand-deep)] shadow-sm">
-                {item}
-              </span>
-            ))}
+    <div className="min-h-screen bg-[var(--bg)]">
+      <div className="mx-auto grid min-h-screen max-w-6xl lg:grid-cols-2">
+        <aside className="relative hidden overflow-hidden lg:block">
+          <img
+            src="https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1400&q=80"
+            alt=""
+            className="absolute inset-0 h-full w-full object-cover"
+          />
+          <div className="absolute inset-0 bg-[linear-gradient(160deg,rgba(11,61,58,0.88),rgba(15,118,110,0.72))]" />
+          <div className="relative z-10 flex h-full flex-col justify-between p-10 text-white">
+            <Link href="/" className="text-xl font-bold tracking-tight">
+              {BRAND.name}
+            </Link>
+            <div>
+              <h1 className="max-w-md text-4xl font-bold leading-tight tracking-tight">
+                Welcome back to clearer crowdfunding.
+              </h1>
+              <p className="mt-4 max-w-sm text-sm leading-7 text-white/80">
+                Manage credits, campaigns, and contributions — built for Supporters, Creators, and Admins.
+              </p>
+            </div>
+            <p className="text-xs text-white/60">Secure sessions · Role-based dashboards · Transparent credits</p>
           </div>
-        </div>
+        </aside>
 
-        <div className="w-full lg:max-w-md">
-          <div className="rounded-[24px] border border-white/70 bg-white/95 p-7 shadow-[var(--shadow-lg)] backdrop-blur md:p-9">
+        <div className="flex items-center justify-center px-5 py-12">
+          <div className="w-full max-w-md">
+            <Link href="/" className="mb-10 inline-flex text-xl font-bold tracking-tight lg:hidden">
+              {BRAND.name}<span className="text-[var(--brand)]">.</span>
+            </Link>
             <p className="text-sm font-semibold text-[var(--brand)]">Sign in</p>
-            <h2 className="mt-2 text-2xl font-bold tracking-tight">Access your workspace</h2>
+            <h2 className="mt-2 text-3xl font-bold tracking-tight">Access your workspace</h2>
+            <p className="mt-2 text-sm text-[var(--muted)]">Enter your credentials to continue.</p>
+
             <form onSubmit={submit} className="mt-8 space-y-5">
               <label className="block">
                 <span className="field-label">Email</span>
@@ -88,20 +99,20 @@ export default function LoginPage() {
                   <button
                     type="button"
                     onClick={() => setShow((v) => !v)}
-                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-lg p-1.5 text-[var(--muted)] hover:bg-[var(--bg)] hover:text-[var(--ink)]"
+                    className="absolute right-3 top-1/2 -translate-y-1/2 rounded-xl p-1.5 text-[var(--muted)] hover:bg-[var(--bg)] hover:text-[var(--ink)]"
                     aria-label={show ? "Hide password" : "Show password"}
                   >
-                    {show ? <EyeOff size={18} /> : <Eye size={18} />}
+                    {show ? <HiOutlineEyeSlash size={18} /> : <HiOutlineEye size={18} />}
                   </button>
                 </div>
               </label>
               {error && (
-                <p role="alert" className="rounded-[12px] bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]">
+                <p role="alert" className="rounded-lg bg-[var(--danger-soft)] px-4 py-3 text-sm text-[var(--danger)]">
                   {error}
                 </p>
               )}
               <Button className="w-full" size="lg" disabled={busy}>
-                {busy ? "Signing in…" : <>Sign in <ArrowRight size={18} /></>}
+                {busy ? "Signing in…" : <>Sign in <HiOutlineArrowRight size={18} /></>}
               </Button>
             </form>
 
@@ -111,8 +122,16 @@ export default function LoginPage() {
             <Button
               variant="secondary"
               className="w-full"
-              onClick={() => void authClient.signIn.social({ provider: "google", callbackURL: "/dashboard" })}
+              onClick={() =>
+                void authClient.signIn.social({
+                  provider: "google",
+                  callbackURL: `${APP_URL}/dashboard`,
+                  errorCallbackURL: `${APP_URL}/login`,
+                  newUserCallbackURL: `${APP_URL}/dashboard`,
+                })
+              }
             >
+              <GoogleIcon />
               Continue with Google
             </Button>
             <p className="mt-6 text-center text-sm text-[var(--muted)]">

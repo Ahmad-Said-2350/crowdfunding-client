@@ -51,9 +51,14 @@ export default function CreatorHome() {
         description="Review incoming support and keep campaign momentum visible."
       />
       <div className="grid gap-5 md:grid-cols-3">
-        <StatCard accent="creator" label="Total campaigns" value={data?.stats.totalCampaigns ?? "—"} />
-        <StatCard accent="creator" label="Active campaigns" value={data?.stats.activeCampaigns ?? "—"} />
-        <StatCard accent="creator" label="Credits raised" value={data?.stats.totalRaised ?? "—"} />
+        <StatCard label="Total campaigns" value={data?.stats.totalCampaigns ?? "—"} />
+        <StatCard label="Active campaigns" value={data?.stats.activeCampaigns ?? "—"} />
+        <StatCard label="Credits raised" value={data?.stats.totalRaised ?? "—"} />
+      </div>
+      <div className="mt-6 flex flex-wrap gap-2">
+        <a href="/dashboard/add-campaign"><Button size="sm">New campaign</Button></a>
+        <a href="/dashboard/my-campaigns"><Button size="sm" variant="secondary">My campaigns</Button></a>
+        <a href="/dashboard/withdrawals"><Button size="sm" variant="soft">Request withdrawal</Button></a>
       </div>
       <h2 className="mb-4 mt-10 text-lg font-semibold tracking-tight">Pending contributions</h2>
       {data?.pendingContributions.length ? (

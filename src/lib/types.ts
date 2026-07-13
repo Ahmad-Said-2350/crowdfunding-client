@@ -11,10 +11,14 @@ export interface User {
   name: string;
   email: string;
   image?: string | null;
+  bio?: string;
+  phone?: string;
+  location?: string;
   role: Role;
   credits: number;
   raisedCredits: number;
   blocked?: boolean;
+  createdAt?: string | null;
 }
 
 export interface Campaign {

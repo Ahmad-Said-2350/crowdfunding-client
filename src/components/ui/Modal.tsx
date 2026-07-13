@@ -36,7 +36,7 @@ export function Modal({ open, onClose, title, description, children, size = "md"
         aria-modal="true"
         aria-label={title}
         className={cn(
-          "max-h-[90vh] w-full overflow-auto rounded-[20px] bg-white shadow-[var(--shadow-lg)] animate-in",
+          "max-h-[90vh] w-full overflow-auto rounded-xl bg-white shadow-[var(--shadow-lg)] animate-in",
           size === "sm" && "max-w-md",
           size === "md" && "max-w-lg",
           size === "lg" && "max-w-2xl"
@@ -52,7 +52,7 @@ export function Modal({ open, onClose, title, description, children, size = "md"
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-[var(--muted)] transition hover:bg-[var(--bg)] hover:text-[var(--ink)]"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-lg text-[var(--muted)] transition hover:bg-[var(--bg)] hover:text-[var(--ink)]"
           >
             <X size={18} />
           </button>

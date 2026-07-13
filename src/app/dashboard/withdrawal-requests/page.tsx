@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
+import { ConfirmModal } from "@/components/ui/Modal";
 import { fetchJSON } from "@/lib/api";
 
 type Withdrawal = {
@@ -20,6 +21,8 @@ type Withdrawal = {
 export default function WithdrawalRequestsPage() {
   const [withdrawals, setWithdrawals] = useState<Withdrawal[]>([]);
   const [message, setMessage] = useState("");
+  const [action, setAction] = useState<{ id: string; type: "approve" | "reject" } | null>(null);
+  const [busy, setBusy] = useState(false);
 
   const load = () =>
     fetchJSON<{ withdrawals: Withdrawal[] }>("/api/admin/withdrawals")
@@ -30,13 +33,24 @@ export default function WithdrawalRequestsPage() {
     load();
   }, []);
 
-  const approve = async (id: string) => {
+  const apply = async () => {
+    if (!action) return;
+    setBusy(true);
+    setMessage("");
     try {
-      await fetchJSON(`/api/admin/withdrawals/${id}/approve`, { method: "PATCH" });
-      setMessage("Marked as payment success.");
+      if (action.type === "approve") {
+        await fetchJSON(`/api/admin/withdrawals/${action.id}/approve`, { method: "PATCH" });
+        setMessage("Marked as payment success.");
+      } else {
+        await fetchJSON(`/api/admin/withdrawals/${action.id}/reject`, { method: "PATCH" });
+        setMessage("Withdrawal rejected.");
+      }
+      setAction(null);
       load();
     } catch (err) {
-      setMessage(err instanceof Error ? err.message : "Approval failed.");
+      setMessage(err instanceof Error ? err.message : "Action failed.");
+    } finally {
+      setBusy(false);
     }
   };
 
@@ -45,11 +59,11 @@ export default function WithdrawalRequestsPage() {
       <DashboardHeader
         eyebrow="Finance operations"
         title="Withdrawal requests"
-        description="Approve pending creator withdrawals. Approval reduces the creator's raised credits."
+        description="Approve or reject creator payouts. Approval reduces the creator's raised credits."
       />
-      {message && <p className="mb-4 text-sm">{message}</p>}
+      {message && <p className="mb-4 text-sm text-[var(--brand-deep)]">{message}</p>}
       {withdrawals.length ? (
-        <div className="overflow-auto">
+        <div className="overflow-auto rounded-xl border border-[var(--border)] bg-white">
           <table className="data-table">
             <thead>
               <tr>
@@ -60,13 +74,13 @@ export default function WithdrawalRequestsPage() {
                 <th>System</th>
                 <th>Account</th>
                 <th>Date</th>
-                <th>Action</th>
+                <th>Actions</th>
               </tr>
             </thead>
             <tbody>
               {withdrawals.map((w) => (
                 <tr key={w._id}>
-                  <td>{w.creator_name}</td>
+                  <td className="font-medium">{w.creator_name}</td>
                   <td>{w.creator_email}</td>
                   <td>{w.withdrawal_credit}</td>
                   <td>{w.withdrawal_amount}</td>
@@ -74,7 +88,10 @@ export default function WithdrawalRequestsPage() {
                   <td>{w.account_number}</td>
                   <td>{new Date(w.withdraw_date).toLocaleString()}</td>
                   <td>
-                    <Button className="h-9 px-3" onClick={() => void approve(w._id)}>Payment success</Button>
+                    <div className="flex flex-wrap gap-1.5">
+                      <Button size="sm" onClick={() => setAction({ id: w._id, type: "approve" })}>Approve</Button>
+                      <Button size="sm" variant="danger" onClick={() => setAction({ id: w._id, type: "reject" })}>Reject</Button>
+                    </div>
                   </td>
                 </tr>
               ))}
@@ -84,6 +101,21 @@ export default function WithdrawalRequestsPage() {
       ) : (
         <EmptyState description="No pending withdrawal requests." />
       )}
+
+      <ConfirmModal
+        open={Boolean(action)}
+        onClose={() => setAction(null)}
+        onConfirm={apply}
+        title={action?.type === "approve" ? "Approve withdrawal" : "Reject withdrawal"}
+        description={
+          action?.type === "approve"
+            ? "Confirm payout and deduct raised credits from the creator?"
+            : "Reject this withdrawal request and notify the creator?"
+        }
+        confirmLabel={action?.type === "approve" ? "Approve" : "Reject"}
+        tone={action?.type === "approve" ? "primary" : "danger"}
+        busy={busy}
+      />
     </>
   );
 }

@@ -4,6 +4,7 @@ import { useEffect, useState } from "react";
 import { DashboardHeader } from "@/components/DashboardHeader";
 import { StatCard } from "@/components/ui/StatCard";
 import { Badge } from "@/components/ui/Badge";
+import { Button } from "@/components/ui/Button";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { fetchJSON } from "@/lib/api";
 import type { Contribution } from "@/lib/types";
@@ -28,9 +29,14 @@ export default function SupporterHome() {
         description="Track pledges, pending reviews, and approved impact across campaigns you support."
       />
       <div className="grid gap-5 md:grid-cols-3">
-        <StatCard accent="blue" label="Total contributions" value={data?.stats.totalContributions ?? "—"} />
-        <StatCard accent="blue" label="Pending review" value={data?.stats.pendingContributions ?? "—"} />
-        <StatCard accent="blue" label="Approved credits" value={data?.stats.totalAmount ?? "—"} />
+        <StatCard label="Total contributions" value={data?.stats.totalContributions ?? "—"} />
+        <StatCard label="Pending review" value={data?.stats.pendingContributions ?? "—"} />
+        <StatCard label="Approved credits" value={data?.stats.totalAmount ?? "—"} />
+      </div>
+      <div className="mt-6 flex flex-wrap gap-2">
+        <a href="/dashboard/explore-campaigns"><Button size="sm">Explore campaigns</Button></a>
+        <a href="/dashboard/my-contributions"><Button size="sm" variant="secondary">My contributions</Button></a>
+        <a href="/dashboard/purchase-credit"><Button size="sm" variant="soft">Buy credits</Button></a>
       </div>
       <h2 className="mb-4 mt-10 text-lg font-semibold tracking-tight">Approved contributions</h2>
       {data?.approvedContributions.length ? (

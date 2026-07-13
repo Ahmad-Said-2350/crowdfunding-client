@@ -16,29 +16,33 @@ const NAV: Record<Role, [string, string][]> = {
     ["My contributions", "my-contributions"],
     ["Buy credits", "purchase-credit"],
     ["Payments", "payment-history"],
+    ["Profile", "profile"],
   ],
   creator: [
     ["Overview", "creator-home"],
     ["New campaign", "add-campaign"],
     ["My campaigns", "my-campaigns"],
     ["Withdrawals", "withdrawals"],
-    ["Payouts", "payment-history"],
+    ["Payments", "payment-history"],
+    ["Profile", "profile"],
   ],
   admin: [
     ["Operations", "admin-home"],
     ["Users", "manage-users"],
     ["Campaigns", "manage-campaigns"],
     ["Withdrawals", "withdrawal-requests"],
+    ["Payments", "manage-payments"],
     ["Reports", "reports"],
+    ["Profile", "profile"],
   ],
 };
 
 type Notification = { _id: string; message: string; actionRoute: string; time: string; read: boolean };
 
 const accent: Record<Role, string> = {
-  supporter: "var(--supporter)",
-  creator: "var(--creator)",
-  admin: "var(--admin)",
+  supporter: "var(--brand)",
+  creator: "var(--brand)",
+  admin: "var(--brand)",
 };
 
 export function DashboardLayout({ children }: { children: React.ReactNode }) {
@@ -112,15 +116,17 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               </div>
             )}
           </div>
-          <div className="hidden text-right md:block">
+          <Link href="/dashboard/profile" className="hidden text-right transition hover:opacity-90 md:block">
             <p className="text-[0.68rem] uppercase tracking-wide text-slate-400">{ROLE_LABEL[user.role]}</p>
             <p className="text-sm font-semibold">{user.name}</p>
-          </div>
-          {user.image ? (
-            <img src={user.image} alt={user.name} className="h-9 w-9 rounded-full object-cover" />
-          ) : (
-            <span className="grid h-9 w-9 place-items-center rounded-full text-sm font-bold text-white" style={{ background: roleColor }}>{user.name[0]}</span>
-          )}
+          </Link>
+          <Link href="/dashboard/profile" className="shrink-0">
+            {user.image ? (
+              <img src={user.image} alt={user.name} className="h-9 w-9 rounded-full object-cover ring-2 ring-white/20" />
+            ) : (
+              <span className="grid h-9 w-9 place-items-center rounded-full text-sm font-bold text-white" style={{ background: roleColor }}>{user.name[0]}</span>
+            )}
+          </Link>
         </div>
       </header>
 
@@ -157,6 +163,9 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
 
       <main className="min-h-screen pt-16 lg:pl-64">
         <div className="mx-auto max-w-7xl p-5 md:p-8">{children}</div>
+        <footer className="border-t border-[var(--border)] px-5 py-4 text-center text-xs text-[var(--muted)] md:px-8">
+          © {new Date().getFullYear()} {BRAND.name} · {ROLE_LABEL[user.role]} workspace
+        </footer>
       </main>
     </div>
   );

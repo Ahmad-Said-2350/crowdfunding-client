@@ -59,11 +59,18 @@ export default function AdminHome() {
         description="Monitor growth, moderate new campaigns, and keep Pledgekit trustworthy."
       />
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-5">
-        <StatCard accent="admin" label="Supporters" value={data?.stats.totalSupporters ?? "—"} />
-        <StatCard accent="admin" label="Creators" value={data?.stats.totalCreators ?? "—"} />
-        <StatCard accent="admin" label="Available credits" value={data?.stats.totalAvailableCredits ?? "—"} />
-        <StatCard accent="admin" label="Payments processed" value={data?.stats.totalPaymentsProcessed ?? "—"} />
-        <StatCard accent="admin" label="Blocked accounts" value={blockedCount} detail="Managed in Users" />
+        <StatCard label="Supporters" value={data?.stats.totalSupporters ?? "—"} />
+        <StatCard label="Creators" value={data?.stats.totalCreators ?? "—"} />
+        <StatCard label="Available credits" value={data?.stats.totalAvailableCredits ?? "—"} />
+        <StatCard label="Payments processed" value={data?.stats.totalPaymentsProcessed ?? "—"} />
+        <StatCard label="Blocked accounts" value={blockedCount} detail="Managed in Users" />
+      </div>
+
+      <div className="mt-6 flex flex-wrap gap-2">
+        <a href="/dashboard/manage-campaigns"><Button size="sm" variant="soft">All campaigns</Button></a>
+        <a href="/dashboard/manage-payments"><Button size="sm" variant="secondary">Payment control</Button></a>
+        <a href="/dashboard/withdrawal-requests"><Button size="sm" variant="secondary">Withdrawals</Button></a>
+        <a href="/dashboard/reports"><Button size="sm" variant="secondary">Reports</Button></a>
       </div>
 
       <h2 className="mb-4 mt-10 text-lg font-semibold tracking-tight">Campaign approvals</h2>

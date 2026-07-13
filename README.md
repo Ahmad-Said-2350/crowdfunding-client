@@ -6,7 +6,7 @@ Pledgekit is a credit-based crowdfunding platform where Supporters discover camp
 
 ## Live links
 
-- Front-end live site: `https://pledgekit.vercel.app` *(update after deploy)*
+- Front-end live site: `https://pledgekit.vercel.app` *(update after your Vercel deploy)*
 - Client GitHub: https://github.com/Ahmad-Said-2350/crowdfunding-client
 - Server GitHub: https://github.com/Ahmad-Said-2350/crowdfunding-server
 
@@ -17,17 +17,20 @@ Pledgekit is a credit-based crowdfunding platform where Supporters discover camp
 
 ## Features
 
-- Role-based workspaces for Supporter, Creator, and Admin (distinct navigation and accents)
+- Role-based workspaces for Supporter, Creator, and Admin with shared brand colors and distinct access
 - Better Auth email/password + Google sign-in with JWT in localStorage
 - Registration credits: 50 for Supporters, 20 for Creators
 - Campaign approval gate before public discovery
 - Contribution approve/reject with refunds and notifications
-- Admin user governance: role updates, **block/unblock**, and removals via professional modals
+- Admin governance: roles, block/unblock, campaign moderation, payment control, reports
 - Stripe credit packages with dummy checkout fallback
 - Creator withdrawals (20 credits = $1, min 200 credits)
 - Notification center with click-outside dismiss
-- imgBB uploads, paginated contributions, campaign reports
-- IBM Carbon-inspired minimal UI with Inter and consistent control sizing
+- imgBB uploads for profile and campaign images
+- Paginated contribution ledger and campaign reporting
+- Explore filters by category and sort (deadline, funded, goal, newest)
+- Profile page for every role (view/edit details + photo upload)
+- Responsive public site + dashboard for mobile, tablet, and desktop
 
 ## Local development
 
@@ -39,4 +42,4 @@ Pledgekit is a credit-based crowdfunding platform where Supporters discover camp
 
 - Next.js 15 + TypeScript + Tailwind CSS v4
 - Better Auth + JWT
-- Swiper + Framer Motion + Lucide
+- Swiper + Framer Motion + React Icons

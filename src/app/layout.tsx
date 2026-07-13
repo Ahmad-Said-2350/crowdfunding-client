@@ -13,6 +13,10 @@ const inter = Inter({
 export const metadata: Metadata = {
   title: { default: "Pledgekit", template: "%s | Pledgekit" },
   description: "Professional crowdfunding for creators, supporters, and platform operators.",
+  icons: {
+    icon: [{ url: "/favicon.svg", type: "image/svg+xml" }],
+    apple: [{ url: "/favicon.svg" }],
+  },
 };
 
 export default function RootLayout({

@@ -65,7 +65,7 @@ function PurchaseCreditContent() {
       />
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {packages.map(([key, credits, price]) => (
-          <article key={key} className="rounded-[18px] border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-sm)] transition hover:-translate-y-1 hover:shadow-[var(--shadow-md)]">
+          <article key={key} className="rounded-xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-sm)] transition hover:-translate-y-0.5 hover:shadow-[var(--shadow-md)]">
             <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">Pledgekit credits</p>
             <h2 className="mt-2 text-3xl font-bold tracking-tight">{credits}</h2>
             <p className="mt-4 text-2xl font-semibold text-[var(--brand)]">{price}</p>
