@@ -138,7 +138,7 @@ export default function ManageUsersPage() {
                     <div className="flex flex-wrap gap-2">
                       <Button
                         size="sm"
-                        variant="tertiary"
+                        variant="soft"
                         onClick={() => {
                           setRoleUser(u);
                           setNextRole(u.role);

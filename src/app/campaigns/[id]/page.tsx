@@ -64,85 +64,77 @@ export default function CampaignDetails({ params }: { params: Promise<{ id: stri
     }
   };
 
-  if (error) {
-    return <BasicLayout><div className="container-pk py-24 text-sm">{error}</div></BasicLayout>;
-  }
-  if (!campaign) {
-    return <BasicLayout><div className="container-pk py-24 text-sm text-[var(--muted)]">Loading campaign…</div></BasicLayout>;
-  }
+  if (error) return <BasicLayout><div className="container-pk py-24 text-sm">{error}</div></BasicLayout>;
+  if (!campaign) return <BasicLayout><div className="container-pk py-24 text-sm text-[var(--muted)]">Loading campaign…</div></BasicLayout>;
 
   const progress = Math.min(100, Math.round((campaign.amount_raised / Math.max(campaign.funding_goal, 1)) * 100));
 
   return (
     <BasicLayout>
-      <main>
-        <section className="container-pk grid gap-10 py-14 lg:grid-cols-[1.35fr_0.65fr]">
-          <div>
+      <main className="container-pk grid gap-8 py-12 lg:grid-cols-[1.35fr_0.65fr]">
+        <div>
+          <div className="overflow-hidden rounded-[20px] border border-[var(--border)] shadow-[var(--shadow-sm)]">
             <img src={campaign.campaign_image_url} alt={campaign.campaign_title} className="aspect-[16/9] w-full object-cover" />
-            <div className="mt-9">
-              <Badge tone="blue">{campaign.category}</Badge>
-              <h1 className="mt-4 text-4xl font-semibold tracking-tight md:text-5xl">{campaign.campaign_title}</h1>
-              <p className="mt-4 text-sm text-[var(--muted)]">Created by <b className="text-[var(--ink)]">{campaign.creator_name}</b></p>
-              <h2 className="mt-10 text-lg font-semibold">Campaign story</h2>
-              <p className="mt-4 whitespace-pre-line leading-8 text-[var(--muted)]">{campaign.campaign_story}</p>
-              <h2 className="mt-9 text-lg font-semibold">Contributor reward</h2>
-              <p className="mt-3 text-[var(--muted)]">{campaign.reward_info}</p>
-            </div>
           </div>
-          <aside className="h-fit border border-[var(--border)] border-t-4 border-t-[var(--pk-blue)] bg-[var(--surface)] p-7 lg:sticky lg:top-24">
-            <p className="text-3xl font-semibold tracking-tight">
-              {campaign.amount_raised.toLocaleString()}{" "}
-              <small className="text-sm font-normal text-[var(--muted)]">credits raised</small>
-            </p>
-            <p className="mt-2 text-sm">Goal: {campaign.funding_goal.toLocaleString()} credits</p>
-            <div className="pk-progress mt-5"><span style={{ width: `${progress}%` }} /></div>
-            <div className="mt-2 flex justify-between text-xs text-[var(--muted)]">
-              <span>{progress}% funded</span>
-              <span>Ends {new Date(campaign.deadline).toLocaleDateString()}</span>
-            </div>
-            {user?.role === "supporter" ? (
-              <form onSubmit={contribute} className="mt-8 space-y-4">
-                <label>
-                  <span className="field-label">Contribution credits (minimum {campaign.minimum_contribution})</span>
-                  <Input type="number" min={campaign.minimum_contribution} value={amount} onChange={(e) => setAmount(e.target.value)} required />
-                </label>
-                <label>
-                  <span className="field-label">Message (optional)</span>
-                  <textarea
-                    className="min-h-24 w-full border-0 border-b-2 border-[var(--border-strong)] bg-white p-3 text-sm outline-none focus:border-[var(--pk-blue)]"
-                    maxLength={500}
-                    value={note}
-                    onChange={(e) => setNote(e.target.value)}
-                  />
-                </label>
-                <Button className="w-full" disabled={busy}>{busy ? "Submitting…" : "Contribute credits"}</Button>
-              </form>
-            ) : (
-              <Link href={user ? "/dashboard" : "/login"} className="mt-8 block">
-                <Button className="w-full">{user ? "Open dashboard" : "Sign in to contribute"}</Button>
-              </Link>
-            )}
-            {user && (
-              <Button variant="ghost" className="mt-3 w-full" onClick={() => setReportOpen(true)}>
-                Report campaign
-              </Button>
-            )}
-            {message && <p className="mt-4 text-sm">{message}</p>}
-          </aside>
-        </section>
+          <div className="mt-8">
+            <Badge tone="blue">{campaign.category}</Badge>
+            <h1 className="mt-4 text-4xl font-bold tracking-tight md:text-5xl">{campaign.campaign_title}</h1>
+            <p className="mt-4 text-sm text-[var(--muted)]">Created by <b className="text-[var(--ink)]">{campaign.creator_name}</b></p>
+            <h2 className="mt-10 text-lg font-bold">Campaign story</h2>
+            <p className="mt-3 whitespace-pre-line leading-8 text-[var(--muted)]">{campaign.campaign_story}</p>
+            <h2 className="mt-8 text-lg font-bold">Contributor reward</h2>
+            <p className="mt-3 text-[var(--muted)]">{campaign.reward_info}</p>
+          </div>
+        </div>
+
+        <aside className="h-fit rounded-[20px] border border-[var(--border)] bg-white p-7 shadow-[var(--shadow-md)] lg:sticky lg:top-24">
+          <p className="text-3xl font-bold tracking-tight">
+            {campaign.amount_raised.toLocaleString()}
+            <span className="ml-2 text-sm font-medium text-[var(--muted)]">credits raised</span>
+          </p>
+          <p className="mt-2 text-sm text-[var(--muted)]">Goal: {campaign.funding_goal.toLocaleString()} credits</p>
+          <div className="pk-progress mt-5"><span style={{ width: `${progress}%` }} /></div>
+          <div className="mt-2 flex justify-between text-xs text-[var(--muted)]">
+            <span>{progress}% funded</span>
+            <span>Ends {new Date(campaign.deadline).toLocaleDateString()}</span>
+          </div>
+
+          {user?.role === "supporter" ? (
+            <form onSubmit={contribute} className="mt-8 space-y-4">
+              <label>
+                <span className="field-label">Contribution credits (min {campaign.minimum_contribution})</span>
+                <Input type="number" min={campaign.minimum_contribution} value={amount} onChange={(e) => setAmount(e.target.value)} required />
+              </label>
+              <label>
+                <span className="field-label">Message (optional)</span>
+                <textarea
+                  className="min-h-24 w-full rounded-[12px] border border-[var(--border)] bg-white p-3 text-sm outline-none transition focus:border-[var(--brand)] focus:ring-4 focus:ring-[var(--brand-soft)]"
+                  maxLength={500}
+                  value={note}
+                  onChange={(e) => setNote(e.target.value)}
+                />
+              </label>
+              <Button className="w-full" disabled={busy}>{busy ? "Submitting…" : "Contribute credits"}</Button>
+            </form>
+          ) : (
+            <Link href={user ? "/dashboard" : "/login"} className="mt-8 block">
+              <Button className="w-full">{user ? "Open dashboard" : "Sign in to contribute"}</Button>
+            </Link>
+          )}
+          {user && <Button variant="ghost" className="mt-3 w-full" onClick={() => setReportOpen(true)}>Report campaign</Button>}
+          {message && <p className="mt-4 rounded-[12px] bg-[var(--brand-soft)] px-3 py-2 text-sm text-[var(--brand-deep)]">{message}</p>}
+        </aside>
       </main>
+
       <Modal
         open={reportOpen}
         onClose={() => setReportOpen(false)}
         title="Report campaign"
-        description="Tell administrators why this campaign may be suspicious or fraudulent."
+        description="Tell administrators why this campaign may be suspicious."
         footer={
           <>
             <Button variant="secondary" size="sm" onClick={() => setReportOpen(false)}>Cancel</Button>
-            <Button size="sm" onClick={() => {
-              const form = document.getElementById("report-form") as HTMLFormElement | null;
-              form?.requestSubmit();
-            }} disabled={busy}>
+            <Button size="sm" disabled={busy} onClick={() => (document.getElementById("report-form") as HTMLFormElement | null)?.requestSubmit()}>
               {busy ? "Submitting…" : "Submit report"}
             </Button>
           </>
@@ -152,7 +144,7 @@ export default function CampaignDetails({ params }: { params: Promise<{ id: stri
           <label>
             <span className="field-label">Reason</span>
             <textarea
-              className="min-h-36 w-full border-0 border-b-2 border-[var(--border-strong)] bg-[var(--surface)] p-4 text-sm outline-none focus:border-[var(--pk-blue)]"
+              className="min-h-36 w-full rounded-[12px] border border-[var(--border)] bg-[var(--bg)] p-4 text-sm outline-none focus:border-[var(--brand)] focus:ring-4 focus:ring-[var(--brand-soft)]"
               minLength={10}
               value={reason}
               onChange={(e) => setReason(e.target.value)}

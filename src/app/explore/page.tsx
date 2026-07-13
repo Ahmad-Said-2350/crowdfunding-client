@@ -32,16 +32,16 @@ function ExploreContent() {
 
   return (
     <>
-      <header className="bg-[var(--ink)] py-20 text-white">
+      <header className="bg-[var(--brand-deep)] py-16 text-white">
         <div className="container-pk">
-          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">Explore {BRAND.name}</p>
-          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">
-            Discover open campaigns built for real outcomes.
+          <p className="text-xs font-semibold uppercase tracking-[0.16em] text-teal-200">Explore {BRAND.name}</p>
+          <h1 className="mt-3 max-w-3xl text-4xl font-bold tracking-tight md:text-5xl">
+            Discover campaigns ready for support.
           </h1>
         </div>
       </header>
       <main className="section-space container-pk">
-        <div className="grid gap-4 border-b border-[var(--border)] pb-6 md:grid-cols-[1fr_220px_180px]">
+        <div className="grid gap-3 rounded-[18px] border border-[var(--border)] bg-white p-4 shadow-[var(--shadow-sm)] md:grid-cols-[1fr_200px_180px]">
           <Input placeholder="Search title, story, or creator…" value={q} onChange={(e) => setQ(e.target.value)} />
           <Select value={category} onChange={(e) => setCategory(e.target.value)}>
             <option value="all">All categories</option>
@@ -61,9 +61,7 @@ function ExploreContent() {
         </p>
         {campaigns.length ? (
           <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
-            {campaigns.map((c) => (
-              <CampaignCard key={c._id} campaign={c} />
-            ))}
+            {campaigns.map((c) => <CampaignCard key={c._id} campaign={c} />)}
           </div>
         ) : (
           !loading && <EmptyState title="No matching campaigns" description="Try a different category or broaden your search." />

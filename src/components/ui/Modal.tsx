@@ -18,11 +18,11 @@ type ModalProps = {
 export function Modal({ open, onClose, title, description, children, size = "md", footer }: ModalProps) {
   useEffect(() => {
     if (!open) return;
-    const close = (event: KeyboardEvent) => event.key === "Escape" && onClose();
-    document.addEventListener("keydown", close);
+    const onKey = (e: KeyboardEvent) => e.key === "Escape" && onClose();
+    document.addEventListener("keydown", onKey);
     document.body.style.overflow = "hidden";
     return () => {
-      document.removeEventListener("keydown", close);
+      document.removeEventListener("keydown", onKey);
       document.body.style.overflow = "";
     };
   }, [open, onClose]);
@@ -30,51 +30,43 @@ export function Modal({ open, onClose, title, description, children, size = "md"
   if (!open) return null;
 
   return (
-    <div className="fixed inset-0 z-50 grid place-items-center bg-[rgba(22,22,22,0.55)] p-4" onMouseDown={onClose}>
+    <div className="fixed inset-0 z-50 grid place-items-center bg-[rgba(12,20,34,0.45)] p-4 backdrop-blur-[2px]" onMouseDown={onClose}>
       <section
         role="dialog"
         aria-modal="true"
         aria-label={title}
         className={cn(
-          "max-h-[90vh] w-full overflow-auto bg-white shadow-[var(--shadow-modal)]",
+          "max-h-[90vh] w-full overflow-auto rounded-[20px] bg-white shadow-[var(--shadow-lg)] animate-in",
           size === "sm" && "max-w-md",
           size === "md" && "max-w-lg",
           size === "lg" && "max-w-2xl"
         )}
         onMouseDown={(e) => e.stopPropagation()}
       >
-        <header className="flex items-start justify-between border-b border-[var(--border)] px-6 py-5">
+        <header className="flex items-start justify-between gap-4 border-b border-[var(--border)] px-6 py-5">
           <div>
-            <h2 className="text-xl font-semibold tracking-tight text-[var(--ink)]">{title}</h2>
-            {description && <p className="mt-1 text-sm text-[var(--muted)]">{description}</p>}
+            <h2 className="text-xl font-bold tracking-tight text-[var(--ink)]">{title}</h2>
+            {description && <p className="mt-1 text-sm leading-6 text-[var(--muted)]">{description}</p>}
           </div>
           <button
             type="button"
             onClick={onClose}
             aria-label="Close"
-            className="grid h-9 w-9 place-items-center text-[var(--muted)] hover:bg-[var(--surface)] hover:text-[var(--ink)]"
+            className="grid h-10 w-10 shrink-0 place-items-center rounded-full text-[var(--muted)] transition hover:bg-[var(--bg)] hover:text-[var(--ink)]"
           >
             <X size={18} />
           </button>
         </header>
         <div className="px-6 py-5">{children}</div>
-        {footer && <footer className="flex flex-wrap items-center justify-end gap-3 border-t border-[var(--border)] bg-[var(--surface)] px-6 py-4">{footer}</footer>}
+        {footer && (
+          <footer className="flex flex-wrap items-center justify-end gap-3 border-t border-[var(--border)] bg-[var(--bg)] px-6 py-4">
+            {footer}
+          </footer>
+        )}
       </section>
     </div>
   );
 }
-
-type ConfirmModalProps = {
-  open: boolean;
-  onClose: () => void;
-  onConfirm: () => void | Promise<void>;
-  title: string;
-  description: string;
-  confirmLabel?: string;
-  cancelLabel?: string;
-  tone?: "primary" | "danger";
-  busy?: boolean;
-};
 
 export function ConfirmModal({
   open,
@@ -86,7 +78,17 @@ export function ConfirmModal({
   cancelLabel = "Cancel",
   tone = "primary",
   busy = false,
-}: ConfirmModalProps) {
+}: {
+  open: boolean;
+  onClose: () => void;
+  onConfirm: () => void | Promise<void>;
+  title: string;
+  description: string;
+  confirmLabel?: string;
+  cancelLabel?: string;
+  tone?: "primary" | "danger";
+  busy?: boolean;
+}) {
   return (
     <Modal
       open={open}
@@ -103,7 +105,7 @@ export function ConfirmModal({
         </>
       }
     >
-      <p className="text-sm text-[var(--muted)]">This action is recorded in Pledgekit activity for accountability.</p>
+      <p className="text-sm leading-6 text-[var(--muted)]">This action is logged for accountability on Pledgekit.</p>
     </Modal>
   );
 }

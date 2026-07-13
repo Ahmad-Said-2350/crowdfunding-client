@@ -86,7 +86,7 @@ export default function AdminHome() {
                   <td>{c.funding_goal}</td>
                   <td>
                     <div className="flex flex-wrap gap-2">
-                      <Button size="sm" variant="tertiary" onClick={() => setSelected(c)}>Review</Button>
+                      <Button size="sm" variant="soft" onClick={() => setSelected(c)}>Review</Button>
                       <Button size="sm" onClick={() => setDecision({ id: c._id, status: "approved" })}>Approve</Button>
                       <Button size="sm" variant="danger" onClick={() => setDecision({ id: c._id, status: "rejected" })}>Reject</Button>
                     </div>
