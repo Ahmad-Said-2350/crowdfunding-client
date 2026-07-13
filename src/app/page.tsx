@@ -1,10 +1,7 @@
 "use client";
 
+import dynamic from "next/dynamic";
 import Link from "next/link";
-import { motion } from "framer-motion";
-import { Pagination, Autoplay } from "swiper/modules";
-import { Swiper, SwiperSlide } from "swiper/react";
-import type { Swiper as SwiperType } from "swiper";
 import { useEffect, useState } from "react";
 import {
   HiOutlineAcademicCap,
@@ -12,8 +9,6 @@ import {
   HiOutlineBuildingLibrary,
   HiOutlineChartBar,
   HiOutlineChevronDown,
-  HiOutlineChevronLeft,
-  HiOutlineChevronRight,
   HiOutlineCpuChip,
   HiOutlineGlobeAlt,
   HiOutlineHeart,
@@ -26,31 +21,33 @@ import { BasicLayout } from "@/components/layout/BasicLayout";
 import { CampaignCard } from "@/components/CampaignCard";
 import { Button } from "@/components/ui/Button";
 import { fetchJSON } from "@/lib/api";
-import { BRAND, type Campaign } from "@/lib/types";
+import type { Campaign } from "@/lib/types";
 
-const slides = [
+const HomeHero = dynamic(() => import("@/components/home/HomeHero").then((m) => m.HomeHero), {
+  ssr: false,
+  loading: () => (
+    <div className="grid min-h-[82vh] place-items-center bg-[var(--brand-deep)] text-sm text-teal-100">
+      Loading Pledgekit…
+    </div>
+  ),
+});
+
+const HomeTestimonials = dynamic(
+  () => import("@/components/home/HomeTestimonials").then((m) => m.HomeTestimonials),
   {
-    title: "Fund ideas that deserve momentum.",
-    copy: "Discover verified campaigns, contribute with credits, and track every outcome with clarity.",
-    href: "/explore",
-    cta: "Explore campaigns",
-    image: "https://images.unsplash.com/photo-1559136555-9303baea8ebd?auto=format&fit=crop&w=1800&q=80",
-  },
-  {
-    title: "Launch with trust built in.",
-    copy: "Create campaigns, review support carefully, and withdraw when your community backs you.",
-    href: "/register",
-    cta: "Start creating",
-    image: "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=1800&q=80",
-  },
-  {
-    title: "A calmer way to crowdfund.",
-    copy: "Pledgekit keeps approvals, refunds, and platform economics visible for every role.",
-    href: "#impact",
-    cta: "See impact",
-    image: "https://images.unsplash.com/photo-1552664730-d307ca884978?auto=format&fit=crop&w=1800&q=80",
-  },
-];
+    ssr: false,
+    loading: () => (
+      <div className="section-space container-pk">
+        <div className="mx-auto h-8 w-48 animate-pulse rounded bg-[var(--border)]" />
+        <div className="mt-10 grid gap-4 md:grid-cols-3">
+          {[0, 1, 2].map((i) => (
+            <div key={i} className="h-52 animate-pulse rounded-xl bg-[var(--bg-soft)]" />
+          ))}
+        </div>
+      </div>
+    ),
+  }
+);
 
 const categories = [
   { name: "Environment", icon: HiOutlineGlobeAlt, image: "https://images.unsplash.com/photo-1470071459604-3b5ec3a7fe05?auto=format&fit=crop&w=900&q=80" },
@@ -70,31 +67,9 @@ const faqs = [
   { q: "Is Google sign-in available?", a: "Yes. Use Continue with Google on the sign-in page when Google OAuth is configured for your environment." },
 ];
 
-const testimonials = [
-  {
-    quote: "Pledgekit made our community energy project feel credible from day one — clear reviews and calm tracking.",
-    name: "Maya Rahman",
-    role: "Creator · Environment",
-    photo: "https://api.dicebear.com/9.x/initials/svg?seed=Maya%20Rahman",
-  },
-  {
-    quote: "Clear review states and credit history make every contribution feel accountable and easy to follow.",
-    name: "Daniel Wong",
-    role: "Supporter",
-    photo: "https://api.dicebear.com/9.x/initials/svg?seed=Daniel%20Wong",
-  },
-  {
-    quote: "Focused, transparent, and refreshingly professional — the kind of platform operators can trust.",
-    name: "Nadia Karim",
-    role: "Operator",
-    photo: "https://api.dicebear.com/9.x/initials/svg?seed=Nadia%20Karim",
-  },
-];
-
 export default function Home() {
   const [campaigns, setCampaigns] = useState<Campaign[]>([]);
   const [stats, setStats] = useState({ campaigns: 0, creditsRaised: 0, supporters: 0, creators: 0 });
-  const [heroSwiper, setHeroSwiper] = useState<SwiperType | null>(null);
   const [openFaq, setOpenFaq] = useState<number | null>(0);
 
   useEffect(() => {
@@ -104,64 +79,7 @@ export default function Home() {
 
   return (
     <BasicLayout>
-      <section className="hero-slider relative overflow-hidden bg-[var(--brand-deep)] text-white">
-        <Swiper
-          modules={[Pagination, Autoplay]}
-          onSwiper={setHeroSwiper}
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 6500, disableOnInteraction: false }}
-          loop
-          speed={700}
-          className="hero-swiper relative"
-        >
-          {slides.map((slide, i) => (
-            <SwiperSlide key={slide.title}>
-              <div className="relative min-h-[82vh]">
-                <img src={slide.image} alt="" className="absolute inset-0 h-full w-full object-cover" />
-                <div className="absolute inset-0 bg-[linear-gradient(105deg,rgba(11,61,58,0.92)_0%,rgba(11,61,58,0.7)_48%,rgba(11,61,58,0.3)_100%)]" />
-                <div className="container-pk relative z-10 flex min-h-[82vh] items-center py-24">
-                  <motion.div
-                    initial={{ opacity: 0, y: 22 }}
-                    whileInView={{ opacity: 1, y: 0 }}
-                    viewport={{ once: true }}
-                    transition={{ duration: 0.45 }}
-                    className="mx-auto max-w-3xl text-center md:mx-0 md:text-left"
-                  >
-                    <p className="mb-5 text-xs font-semibold uppercase tracking-[0.2em] text-teal-200">
-                      {BRAND.name} · 0{i + 1}
-                    </p>
-                    <h1 className="text-4xl font-bold leading-[1.08] tracking-tight md:text-6xl">{slide.title}</h1>
-                    <p className="mt-6 max-w-xl text-base leading-7 text-white/85 md:text-lg md:mx-0 mx-auto">{slide.copy}</p>
-                    <div className="mt-9 flex flex-wrap justify-center gap-3 md:justify-start">
-                      <Link href={slide.href}>
-                        <Button size="lg">
-                          {slide.cta} <HiOutlineArrowRight size={18} />
-                        </Button>
-                      </Link>
-                      <Link href="/register">
-                        <Button
-                          size="lg"
-                          variant="secondary"
-                          className="border-white/35 bg-transparent text-white hover:bg-white hover:text-[var(--brand-deep)]"
-                        >
-                          Create account
-                        </Button>
-                      </Link>
-                    </div>
-                  </motion.div>
-                </div>
-              </div>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-
-        <button type="button" aria-label="Previous slide" className="hero-nav-btn hero-nav-prev" onClick={() => heroSwiper?.slidePrev()}>
-          <HiOutlineChevronLeft size={36} strokeWidth={1.5} />
-        </button>
-        <button type="button" aria-label="Next slide" className="hero-nav-btn hero-nav-next" onClick={() => heroSwiper?.slideNext()}>
-          <HiOutlineChevronRight size={36} strokeWidth={1.5} />
-        </button>
-      </section>
+      <HomeHero />
 
       <section className="pk-sheet section-space">
         <div className="container-pk">
@@ -204,6 +122,7 @@ export default function Home() {
                   alt={cat.name}
                   className="absolute inset-0 h-full w-full object-cover transition duration-500 group-hover:scale-[1.03]"
                   loading="lazy"
+                  decoding="async"
                   onError={(e) => {
                     e.currentTarget.src =
                       "https://images.unsplash.com/photo-1522071820081-009f0129c71c?auto=format&fit=crop&w=900&q=80";
@@ -254,6 +173,7 @@ export default function Home() {
               alt="Team collaborating"
               className="aspect-[4/5] w-full object-cover"
               loading="lazy"
+              decoding="async"
             />
           </div>
         </div>
@@ -282,32 +202,7 @@ export default function Home() {
         </div>
       </section>
 
-      <section className="section-space container-pk">
-        <h2 className="pk-title text-center">What people say</h2>
-        <Swiper
-          className="mt-10 !pb-10"
-          modules={[Pagination, Autoplay]}
-          pagination={{ clickable: true }}
-          autoplay={{ delay: 5000 }}
-          spaceBetween={20}
-          breakpoints={{ 768: { slidesPerView: 2 }, 1024: { slidesPerView: 3 } }}
-        >
-          {testimonials.map((t) => (
-            <SwiperSlide key={t.name} className="!h-auto">
-              <blockquote className="flex h-full min-h-[220px] flex-col rounded-xl border border-[var(--border)] bg-white p-6 shadow-[var(--shadow-sm)]">
-                <div className="flex items-center gap-3">
-                  <img src={t.photo} alt={t.name} className="h-11 w-11 rounded-full bg-[var(--bg)]" />
-                  <div>
-                    <p className="font-semibold">{t.name}</p>
-                    <p className="text-sm text-[var(--muted)]">{t.role}</p>
-                  </div>
-                </div>
-                <p className="mt-5 flex-1 text-sm leading-7 text-[var(--ink-soft)]">“{t.quote}”</p>
-              </blockquote>
-            </SwiperSlide>
-          ))}
-        </Swiper>
-      </section>
+      <HomeTestimonials />
 
       <section className="section-space bg-white">
         <div className="container-pk">
@@ -347,6 +242,8 @@ export default function Home() {
             src="https://images.unsplash.com/photo-1573497019940-1c28c88b4f3e?auto=format&fit=crop&w=1600&q=80"
             alt=""
             className="h-full w-full object-cover"
+            loading="lazy"
+            decoding="async"
           />
           <div className="absolute inset-0 bg-[linear-gradient(90deg,rgba(15,118,110,0.92),rgba(15,118,110,0.55))]" />
         </div>

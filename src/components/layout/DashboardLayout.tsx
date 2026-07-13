@@ -141,6 +141,7 @@ export function DashboardLayout({ children }: { children: React.ReactNode }) {
               <Link
                 key={route}
                 href={`/dashboard/${route}`}
+                prefetch
                 onClick={() => setMenu(false)}
                 className={cn(
                   "block rounded-[12px] px-4 py-3 text-sm font-semibold transition",
