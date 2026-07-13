@@ -6,7 +6,8 @@ Pledgekit is a credit-based crowdfunding platform where Supporters discover camp
 
 ## Live links
 
-- Front-end live site: `https://pledgekit.vercel.app` *(update after your Vercel deploy)*
+- Front-end live site: `https://crowdfunding-client-zeta.vercel.app`
+- API live site: `https://crowdfunding-server-blond.vercel.app`
 - Client GitHub: https://github.com/Ahmad-Said-2350/crowdfunding-client
 - Server GitHub: https://github.com/Ahmad-Said-2350/crowdfunding-server
 
