@@ -1,7 +1,18 @@
-export const API_URL = process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000";
+/** Upstream Express API (used by next.config rewrites). */
+export const API_URL = (process.env.NEXT_PUBLIC_API_URL || "http://localhost:5000").replace(/\/$/, "");
+
 export const APP_URL =
   process.env.NEXT_PUBLIC_APP_URL ||
   (typeof window !== "undefined" ? window.location.origin : "http://localhost:3000");
+
+/**
+ * In the browser, call same-origin `/api/*` (rewritten to Express).
+ * On the server, call the upstream API URL directly.
+ */
+export function apiBase(): string {
+  if (typeof window !== "undefined") return "";
+  return API_URL;
+}
 
 export class ApiError extends Error {
   status: number;
@@ -13,7 +24,7 @@ export class ApiError extends Error {
 
 export async function fetchJSON<T>(path: string, init?: RequestInit): Promise<T> {
   const token = typeof window !== "undefined" ? localStorage.getItem("pledgekit_token") : null;
-  const response = await fetch(`${API_URL}${path}`, {
+  const response = await fetch(`${apiBase()}${path}`, {
     ...init,
     credentials: "include",
     headers: {

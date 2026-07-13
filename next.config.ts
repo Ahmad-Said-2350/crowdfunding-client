@@ -18,13 +18,16 @@ const nextConfig: NextConfig = {
       { protocol: "https", hostname: "images.unsplash.com" },
     ],
   },
-  // Proxy Better Auth through the Next.js origin so Google OAuth cookies are first-party
-  // (separate *.vercel.app API/client hosts block third-party cookies in modern browsers).
+  /**
+   * Proxy ALL API calls through the Next.js origin.
+   * Client + API are different *.vercel.app hosts; browsers block third-party cookies,
+   * which broke login/register/session (/api/me 401). Same-origin proxy keeps cookies first-party.
+   */
   async rewrites() {
     return [
       {
-        source: "/api/auth/:path*",
-        destination: `${API_URL}/api/auth/:path*`,
+        source: "/api/:path*",
+        destination: `${API_URL}/api/:path*`,
       },
     ];
   },

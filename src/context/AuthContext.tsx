@@ -26,10 +26,9 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
       const result = await authClient.token();
       const token = (result.data as { token?: string } | null)?.token;
       if (token) localStorage.setItem("pledgekit_token", token);
-      // migrate old key
       localStorage.removeItem("fundora_token");
     } catch {
-      /* Cookie sessions still work when JWT retrieval is unavailable. */
+      /* Session cookie may still authenticate same-origin /api/me. */
     }
   }, []);
 
@@ -44,14 +43,17 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
 
   const refreshUser = useCallback(async () => {
     try {
+      await saveToken();
       const data = await fetchJSON<{ user: User }>("/api/me");
       setUser(data.user);
-      await saveToken();
     } catch (error) {
       setUser(null);
-      localStorage.removeItem("pledgekit_token");
+      // 401 = logged out (normal). Only hard-clear on blocked accounts.
       if (error instanceof ApiError && error.status === 403) {
+        localStorage.removeItem("pledgekit_token");
         await authClient.signOut().catch(() => undefined);
+      } else if (error instanceof ApiError && error.status === 401) {
+        localStorage.removeItem("pledgekit_token");
       }
     } finally {
       setLoading(false);
