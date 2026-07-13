@@ -2,14 +2,18 @@
 
 import { createContext, useCallback, useContext, useEffect, useState } from "react";
 import { useRouter } from "next/navigation";
-import { fetchJSON } from "@/lib/api";
+import { ApiError, fetchJSON } from "@/lib/api";
 import { authClient } from "@/lib/auth-client";
 import type { User } from "@/lib/types";
 
 type AuthValue = {
-  user: User | null; loading: boolean; refreshUser: () => Promise<void>;
-  saveToken: () => Promise<void>; logout: () => Promise<void>;
+  user: User | null;
+  loading: boolean;
+  refreshUser: () => Promise<void>;
+  saveToken: () => Promise<void>;
+  logout: () => Promise<void>;
 };
+
 const AuthContext = createContext<AuthValue | null>(null);
 
 export function AuthProvider({ children }: { children: React.ReactNode }) {
@@ -21,34 +25,48 @@ export function AuthProvider({ children }: { children: React.ReactNode }) {
     try {
       const result = await authClient.token();
       const token = (result.data as { token?: string } | null)?.token;
-      if (token) localStorage.setItem("fundora_token", token);
-    } catch { /* Cookie sessions still work when JWT retrieval is unavailable. */ }
+      if (token) localStorage.setItem("pledgekit_token", token);
+      // migrate old key
+      localStorage.removeItem("fundora_token");
+    } catch {
+      /* Cookie sessions still work when JWT retrieval is unavailable. */
+    }
   }, []);
+
+  const logout = useCallback(async () => {
+    await authClient.signOut().catch(() => undefined);
+    localStorage.removeItem("pledgekit_token");
+    localStorage.removeItem("fundora_token");
+    setUser(null);
+    router.push("/");
+    router.refresh();
+  }, [router]);
 
   const refreshUser = useCallback(async () => {
     try {
       const data = await fetchJSON<{ user: User }>("/api/me");
       setUser(data.user);
       await saveToken();
-    } catch {
+    } catch (error) {
       setUser(null);
-      localStorage.removeItem("fundora_token");
+      localStorage.removeItem("pledgekit_token");
+      if (error instanceof ApiError && error.status === 403) {
+        await authClient.signOut().catch(() => undefined);
+      }
     } finally {
       setLoading(false);
     }
   }, [saveToken]);
 
-  useEffect(() => { void refreshUser(); }, [refreshUser]);
+  useEffect(() => {
+    void refreshUser();
+  }, [refreshUser]);
 
-  const logout = async () => {
-    await authClient.signOut();
-    localStorage.removeItem("fundora_token");
-    setUser(null);
-    router.push("/");
-    router.refresh();
-  };
-
-  return <AuthContext.Provider value={{ user, loading, refreshUser, saveToken, logout }}>{children}</AuthContext.Provider>;
+  return (
+    <AuthContext.Provider value={{ user, loading, refreshUser, saveToken, logout }}>
+      {children}
+    </AuthContext.Provider>
+  );
 }
 
 export function useAuth() {

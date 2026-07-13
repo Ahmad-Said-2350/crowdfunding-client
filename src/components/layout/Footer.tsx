@@ -1,21 +1,24 @@
 import Link from "next/link";
+import { BRAND } from "@/lib/types";
 
 export function Footer() {
   return (
-    <footer className="bg-[var(--ink)] text-white">
-      <div className="mx-auto grid max-w-7xl gap-8 px-5 py-10 md:grid-cols-2">
+    <footer className="border-t border-[var(--border)] bg-[var(--ink)] text-white">
+      <div className="container-pk grid gap-10 py-12 md:grid-cols-[1.4fr_1fr]">
         <div>
-          <Link href="/" className="font-serif text-2xl font-bold">Fundora.</Link>
-          <p className="mt-3 max-w-md text-sm text-gray-400">Transparent crowdfunding for ideas that deserve momentum.</p>
+          <Link href="/" className="text-2xl font-semibold tracking-tight">
+            {BRAND.name}<span className="text-[var(--pk-blue)]">.</span>
+          </Link>
+          <p className="mt-3 max-w-md text-sm leading-6 text-gray-400">{BRAND.tagline} Transparent credits, clear approvals, measurable outcomes.</p>
         </div>
-        <div className="flex items-center gap-5 md:justify-end">
-          <a aria-label="LinkedIn" href="https://www.linkedin.com/in/ahmad-said-2350" target="_blank" rel="noreferrer" className="text-sm font-medium hover:text-blue-300">LinkedIn</a>
-          <a aria-label="Facebook" href="https://www.facebook.com/ahmad.said.2350" target="_blank" rel="noreferrer" className="text-sm font-medium hover:text-blue-300">Facebook</a>
-          <a aria-label="GitHub" href="https://github.com/Ahmad-Said-2350" target="_blank" rel="noreferrer" className="text-sm font-medium hover:text-blue-300">GitHub</a>
+        <div className="flex flex-wrap items-end gap-6 md:justify-end">
+          <a aria-label="LinkedIn" href="https://www.linkedin.com/in/ahmad-said-2350" target="_blank" rel="noreferrer" className="text-sm font-medium text-gray-300 hover:text-white">LinkedIn</a>
+          <a aria-label="Facebook" href="https://www.facebook.com/ahmad.said.2350" target="_blank" rel="noreferrer" className="text-sm font-medium text-gray-300 hover:text-white">Facebook</a>
+          <a aria-label="GitHub" href="https://github.com/Ahmad-Said-2350" target="_blank" rel="noreferrer" className="text-sm font-medium text-gray-300 hover:text-white">GitHub</a>
         </div>
       </div>
-      <div className="border-t border-gray-700 py-4 text-center text-xs text-gray-400">
-        © {new Date().getFullYear()} Fundora. Built for measurable impact.
+      <div className="border-t border-white/10 py-4 text-center text-xs text-gray-500">
+        © {new Date().getFullYear()} {BRAND.name}. Built for accountable fundraising.
       </div>
     </footer>
   );

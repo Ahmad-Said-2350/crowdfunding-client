@@ -1,22 +1,18 @@
 import type { Metadata } from "next";
-import { IBM_Plex_Sans, IBM_Plex_Serif } from "next/font/google";
+import { Inter } from "next/font/google";
 import { AuthProvider } from "@/context/AuthContext";
 import "./globals.css";
 
-const plexSans = IBM_Plex_Sans({
-  variable: "--font-plex-sans",
-  weight: ["300", "400", "500", "600", "700"],
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-});
-const plexSerif = IBM_Plex_Serif({
-  variable: "--font-plex-serif",
   weight: ["400", "500", "600", "700"],
-  subsets: ["latin"],
+  display: "swap",
 });
 
 export const metadata: Metadata = {
-  title: { default: "Fundora", template: "%s | Fundora" },
-  description: "Transparent crowdfunding for ideas that deserve momentum.",
+  title: { default: "Pledgekit", template: "%s | Pledgekit" },
+  description: "Professional crowdfunding for creators, supporters, and platform operators.",
 };
 
 export default function RootLayout({
@@ -26,7 +22,7 @@ export default function RootLayout({
 }>) {
   return (
     <html lang="en">
-      <body className={`${plexSans.variable} ${plexSerif.variable} antialiased`}>
+      <body className={`${inter.variable} antialiased`}>
         <AuthProvider>{children}</AuthProvider>
       </body>
     </html>

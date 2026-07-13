@@ -8,7 +8,7 @@ import { Input } from "@/components/ui/Input";
 import { Select } from "@/components/ui/Select";
 import { EmptyState } from "@/components/ui/EmptyState";
 import { fetchJSON } from "@/lib/api";
-import type { Campaign } from "@/lib/types";
+import { BRAND, type Campaign } from "@/lib/types";
 
 function ExploreContent() {
   const params = useSearchParams();
@@ -33,12 +33,14 @@ function ExploreContent() {
   return (
     <>
       <header className="bg-[var(--ink)] py-20 text-white">
-        <div className="container-fundora">
-          <p className="text-blue-300">Explore Fundora</p>
-          <h1 className="mt-3 max-w-3xl font-serif text-5xl">Discover open campaigns built for real outcomes.</h1>
+        <div className="container-pk">
+          <p className="text-xs font-semibold uppercase tracking-[0.18em] text-blue-300">Explore {BRAND.name}</p>
+          <h1 className="mt-4 max-w-3xl text-4xl font-semibold tracking-tight md:text-5xl">
+            Discover open campaigns built for real outcomes.
+          </h1>
         </div>
       </header>
-      <main className="section-space container-fundora">
+      <main className="section-space container-pk">
         <div className="grid gap-4 border-b border-[var(--border)] pb-6 md:grid-cols-[1fr_220px_180px]">
           <Input placeholder="Search title, story, or creator…" value={q} onChange={(e) => setQ(e.target.value)} />
           <Select value={category} onChange={(e) => setCategory(e.target.value)}>
@@ -58,7 +60,7 @@ function ExploreContent() {
           {loading ? "Finding campaigns…" : `${campaigns.length} open campaign${campaigns.length === 1 ? "" : "s"}`}
         </p>
         {campaigns.length ? (
-          <div className="grid gap-6 md:grid-cols-2 lg:grid-cols-3">
+          <div className="grid gap-5 md:grid-cols-2 lg:grid-cols-3">
             {campaigns.map((c) => (
               <CampaignCard key={c._id} campaign={c} />
             ))}
@@ -74,7 +76,7 @@ function ExploreContent() {
 export default function ExplorePage() {
   return (
     <BasicLayout>
-      <Suspense fallback={<div className="container-fundora py-24">Loading explore…</div>}>
+      <Suspense fallback={<div className="container-pk py-24 text-sm text-[var(--muted)]">Loading explore…</div>}>
         <ExploreContent />
       </Suspense>
     </BasicLayout>

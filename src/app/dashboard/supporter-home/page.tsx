@@ -23,18 +23,18 @@ export default function SupporterHome() {
   return (
     <>
       <DashboardHeader
-        eyebrow="Supporter overview"
+        eyebrow="Supporter workspace"
         title="Your funding activity"
-        description="Monitor contributions and the campaigns you have helped move forward."
+        description="Track pledges, pending reviews, and approved impact across campaigns you support."
       />
       <div className="grid gap-5 md:grid-cols-3">
-        <StatCard label="Total contributions" value={data?.stats.totalContributions ?? "—"} />
-        <StatCard label="Pending review" value={data?.stats.pendingContributions ?? "—"} />
-        <StatCard label="Approved credits" value={data?.stats.totalAmount ?? "—"} />
+        <StatCard accent="blue" label="Total contributions" value={data?.stats.totalContributions ?? "—"} />
+        <StatCard accent="blue" label="Pending review" value={data?.stats.pendingContributions ?? "—"} />
+        <StatCard accent="blue" label="Approved credits" value={data?.stats.totalAmount ?? "—"} />
       </div>
-      <h2 className="mb-4 mt-10 text-xl font-semibold">Approved contributions</h2>
+      <h2 className="mb-4 mt-10 text-lg font-semibold tracking-tight">Approved contributions</h2>
       {data?.approvedContributions.length ? (
-        <div className="overflow-auto">
+        <div className="overflow-auto border border-[var(--border)]">
           <table className="data-table">
             <thead>
               <tr>
@@ -47,7 +47,7 @@ export default function SupporterHome() {
             <tbody>
               {data.approvedContributions.map((c) => (
                 <tr key={c._id}>
-                  <td>{c.campaign_title}</td>
+                  <td className="font-medium">{c.campaign_title}</td>
                   <td>{c.contribution_amount}</td>
                   <td>{c.creator_name}</td>
                   <td><Badge tone="success">{c.status}</Badge></td>

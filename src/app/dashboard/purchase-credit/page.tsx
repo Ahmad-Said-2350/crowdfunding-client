@@ -61,14 +61,14 @@ function PurchaseCreditContent() {
       <DashboardHeader
         eyebrow="Fund your account"
         title="Purchase credits"
-        description="Secure Stripe checkout. Ten Fundora credits equal one US dollar at purchase."
+        description="Secure Stripe checkout. Ten Pledgekit credits equal one US dollar at purchase."
       />
       <div className="grid gap-5 md:grid-cols-2 xl:grid-cols-4">
         {packages.map(([key, credits, price]) => (
-          <article key={key} className="border-t-4 border-[var(--ibm-blue)] bg-white p-6">
-            <p className="text-sm text-[var(--muted)]">Fundora credits</p>
-            <h2 className="mt-2 text-3xl font-semibold">{credits}</h2>
-            <p className="mt-5 font-serif text-2xl">{price}</p>
+          <article key={key} className="border border-[var(--border)] border-t-4 border-t-[var(--pk-blue)] bg-white p-6">
+            <p className="text-xs font-semibold uppercase tracking-wide text-[var(--muted)]">Pledgekit credits</p>
+            <h2 className="mt-2 text-3xl font-semibold tracking-tight">{credits}</h2>
+            <p className="mt-5 text-2xl font-semibold">{price}</p>
             <Button className="mt-6 w-full" disabled={!!busy} onClick={() => void buy(key)}>
               {busy === key ? "Opening checkout…" : "Purchase"}
             </Button>

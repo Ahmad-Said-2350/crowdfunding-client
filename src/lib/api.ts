@@ -10,7 +10,7 @@ export async function fetchJSON<T>(path: string, init: RequestInit = {}): Promis
   const headers = new Headers(init.headers);
   if (init.body && !(init.body instanceof FormData)) headers.set("Content-Type", "application/json");
   if (typeof window !== "undefined") {
-    const token = localStorage.getItem("fundora_token");
+    const token = localStorage.getItem("pledgekit_token") || localStorage.getItem("fundora_token");
     if (token) headers.set("Authorization", `Bearer ${token}`);
   }
   const response = await fetch(`${API_URL}${path}`, {
