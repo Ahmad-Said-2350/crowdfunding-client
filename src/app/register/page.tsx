@@ -189,14 +189,15 @@ export default function RegisterPage() {
             <Button
               variant="secondary"
               className="w-full"
-              onClick={() =>
+              onClick={() => {
+                const origin = typeof window !== "undefined" ? window.location.origin : APP_URL;
                 void authClient.signIn.social({
                   provider: "google",
-                  callbackURL: `${APP_URL}/dashboard`,
-                  errorCallbackURL: `${APP_URL}/register`,
-                  newUserCallbackURL: `${APP_URL}/dashboard`,
-                })
-              }
+                  callbackURL: `${origin}/auth/callback`,
+                  errorCallbackURL: `${origin}/register?error=google`,
+                  newUserCallbackURL: `${origin}/auth/callback`,
+                });
+              }}
             >
               <GoogleIcon />
               Continue with Google
